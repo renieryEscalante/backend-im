@@ -2,14 +2,19 @@ package com.marvel.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.marvel.dto.characters.response.Item;
 import com.marvel.dto.characters.response.Result;
+import com.marvel.dto.comics.getall.Character;
 import com.marvel.entity.Comic;
 import com.marvel.repository.ComicRepository;
 import com.marvel.service.ComicService;
@@ -29,6 +34,7 @@ public class ComicImpl implements ComicService {
 		try {
 			comicEntityList = builComicEntityList(characters);
 			comicEntityList = filterList(comicEntityList);
+
 			if(!comicEntityList.isEmpty()) {
 				comicRepository.saveAll(comicEntityList);
 			}
@@ -81,14 +87,28 @@ public class ComicImpl implements ComicService {
 		List<Long> comicCodes = null;
 		List<Comic> comicsInDataBase = null;
 		List<Comic> comicListFiltered = null;
+		List<Comic> comicEntityListFiltered = null;
 		try {
 			comicListFiltered = new ArrayList<>();
+			comicEntityListFiltered = new ArrayList<>();
 			
 			// OBTENEMOS TODOS LOS CODIGOS DE LOS COMICS
 			comicCodes = comicEntityList
 					.stream()
 					.map(it -> it.getComicCode())
+					.distinct()
 					.collect(Collectors.toList());
+			
+			// FILTRAMOS LOS DATOS REPETIDOS
+			for(Long comicCode: comicCodes) {
+				Comic comicAux = comicEntityList
+						.stream()
+						.filter( it -> it.getComicCode() == comicCode)
+						.findFirst().orElse(null);
+				if(!Objects.isNull(comicAux)) {
+					comicEntityListFiltered.add(comicAux);
+				}
+			}
 			
 			// BUSCAMOS EN BASE DE DATOS
 			comicsInDataBase = comicRepository.findByComicCodeIn(comicCodes);
@@ -100,26 +120,115 @@ public class ComicImpl implements ComicService {
 					.collect(Collectors.toList());
 			
 			// FILTRAMOS Y AGREGAMOS A UNA NUEVA LISTA LOS COMICS QUE NO ESTAN EN BASE DE DATOS
-			for(Comic itemComic: comicEntityList) {
+			for(Comic itemComic: comicEntityListFiltered) {
 				if(!comicCodes.contains(itemComic.getComicCode())) {
 					comicListFiltered.add(itemComic);
 				}
 			}			
-	
+			
 		} catch (Exception e) {
 			throw e;
 		}
 		return comicListFiltered;
 	}
 
-	
 	@Override
+	@Transactional(readOnly = true)
 	public List<Comic> findByComicCodeIn(List<Long> comicCodes) {
 		try {
 			return comicRepository.findByComicCodeIn(comicCodes);
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<com.marvel.dto.comics.getall.Comic> findAll(Integer offset, Integer limit) {
+		Page<Comic> comicsFromDataBase = null;
+		Page<com.marvel.dto.comics.getall.Comic> response = null;
+		Pageable pageable = null;
+		try {
+			pageable = PageRequest.of(offset, limit);
+			comicsFromDataBase = comicRepository.findAll(pageable);
+			response = buildResponseFromFindAll(comicsFromDataBase);
+		} catch (Exception e) {
+			throw e;
+		}
+		return response;
+	}
+	
+	private Page<com.marvel.dto.comics.getall.Comic> buildResponseFromFindAll(Page<Comic> comicsFromDataBase){
+		Page<com.marvel.dto.comics.getall.Comic> response = null;
+		try {
+			response = comicsFromDataBase
+					.map( it -> {
+						List<Character> characters = null; 
+						com.marvel.dto.comics.getall.Comic comic = new com.marvel.dto.comics.getall.Comic();
+						comic.setComicCode(it.getComicCode());
+						comic.setName(it.getName());
+						
+						characters = it.getCharacterComics()
+							.stream()
+							.map( characterComicsFromDataBase -> {
+								Character character = new Character();
+								com.marvel.entity.Character characterFromDataBase = characterComicsFromDataBase.getCharacter();
+								character.setCharacterCode(characterFromDataBase.getCharacterCode());
+								character.setDescription(characterFromDataBase.getDescription());
+								character.setName(characterFromDataBase.getName());
+								
+								return character;
+							}).collect(Collectors.toList());
+						comic.setCharacters(characters);
+						
+						return comic;
+					});
+		} catch (Exception e) {
+			throw e;
+		}
+		return response;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public com.marvel.dto.comics.getbycode.Comic findByCode(Long comicCode) throws Exception {
+		Comic comicFromDataBase = null;
+		com.marvel.dto.comics.getbycode.Comic response = null;
+		try {
+			comicFromDataBase = comicRepository.findByComicCode(comicCode)
+				.orElseThrow(()-> new Exception());
+			response = buildResponseForFindByCode(comicFromDataBase);
+		} catch (Exception e) {
+			throw e;
+		}
+		return response;
+	}
+	
+	private com.marvel.dto.comics.getbycode.Comic buildResponseForFindByCode(Comic comicFromDataBase){
+		List<com.marvel.dto.comics.getbycode.Character> characters = null; 
+		com.marvel.dto.comics.getbycode.Comic comic = null;
+		try {
+			comic = new com.marvel.dto.comics.getbycode.Comic();
+			comic.setComicCode(comicFromDataBase.getComicCode());
+			comic.setName(comicFromDataBase.getName());
+			
+			characters = comicFromDataBase
+			.getCharacterComics()
+			.stream()
+			.map( characterComicsFromDataBase -> {
+				com.marvel.dto.comics.getbycode.Character character = new com.marvel.dto.comics.getbycode.Character();
+				com.marvel.entity.Character characterFromDataBase = characterComicsFromDataBase.getCharacter();
+				character.setCharacterCode(characterFromDataBase.getCharacterCode());
+				character.setDescription(characterFromDataBase.getDescription());
+				character.setName(characterFromDataBase.getName());
+				
+				return character;
+			}).collect(Collectors.toList());
+			comic.setCharacters(characters);
+		} catch (Exception e) {
+			throw e;
+		}
+		return comic;
 	}
 
 }

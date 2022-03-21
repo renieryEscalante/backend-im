@@ -29,7 +29,7 @@ public class Serie implements Serializable {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-    @Column(name = "serie_code")
+    @Column(name = "serie_code", unique = true)
 	private Long serieCode;
 	private String name;
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "serie")

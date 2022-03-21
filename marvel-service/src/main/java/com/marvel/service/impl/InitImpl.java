@@ -77,7 +77,7 @@ public class InitImpl implements InitService {
 				serieService.saveSeries(results);
 				LOG.info("Saving story types...");
 				storyTypeService.saveStoryType(results);
-				LOG.info("Savin stories...");
+				LOG.info("Saving stories...");
 				storyService.saveStory(results);
 				LOG.info("Saving character comics...");
 				characterComicService.saveCharacterComics(results);

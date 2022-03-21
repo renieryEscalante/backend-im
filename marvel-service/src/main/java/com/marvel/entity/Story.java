@@ -31,7 +31,7 @@ public class Story implements Serializable {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-    @Column(name = "story_code")
+    @Column(name = "story_code", unique = true)
 	private Long storyCode;
 	private String name;
 	@OneToOne(fetch = FetchType.EAGER)

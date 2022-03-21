@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,7 @@ public class CharacterComicImpl implements CharacterComicService {
 	private static final String URI_COMIC = "http://gateway.marvel.com/v1/public/comics/";
 
 	@Override
+	@Transactional
 	public Void saveCharacterComics(List<Result> characters) {
 		List<CharacterComic> detailEntityList = null;
 		try {

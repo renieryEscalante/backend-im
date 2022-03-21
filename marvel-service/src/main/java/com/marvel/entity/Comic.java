@@ -29,7 +29,7 @@ public class Comic implements Serializable {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-    @Column(name = "comic_code")
+    @Column(name = "comic_code", unique = true)
 	private Long comicCode;
 	private String name;
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "comic")

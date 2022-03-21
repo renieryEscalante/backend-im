@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.marvel.dto.characters.getbycode.Comic;
 import com.marvel.dto.characters.response.Result;
 import com.marvel.entity.Character;
 import com.marvel.repository.CharacterRepository;
@@ -93,7 +94,6 @@ public class CharacterImpl implements CharacterService {
 		return characterListFiltered;
 	}
 
-	
 	@Override
 	public Character findByCharacterCode(Long characterCode) {
 		try {
@@ -101,5 +101,52 @@ public class CharacterImpl implements CharacterService {
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+
+	
+	@Override
+	public com.marvel.dto.characters.getbycode.Character findByCode(Long characterCode) throws Exception {
+		Character characterFromDataBase=null;
+		com.marvel.dto.characters.getbycode.Character response = null;
+		try {
+			characterFromDataBase = repository.findByCharacterCode(characterCode)
+					.orElseThrow(() ->  new Exception());
+			
+			response = buildResponseForFindByCode(characterFromDataBase);			
+		} catch (Exception e) {
+			throw e;
+		}
+		return response;
+	}
+	
+	private com.marvel.dto.characters.getbycode.Character buildResponseForFindByCode(Character characterFromDataBase){
+		com.marvel.dto.characters.getbycode.Character response = null;
+		List<Comic> comics = null;
+		try {
+			response = new com.marvel.dto.characters.getbycode.Character();
+			response.setCharacterCode(characterFromDataBase.getCharacterCode());
+			response.setName(characterFromDataBase.getName());
+			response.setDescription(characterFromDataBase.getDescription());
+			
+			comics = characterFromDataBase
+				.getCharacterComics()
+				.stream()
+				.map(it ->{
+					Comic comic = new Comic();
+					com.marvel.entity.Comic comicFromDataBase;
+					comicFromDataBase = it.getComic();
+					
+					comic.setComicCode(comicFromDataBase.getComicCode());
+					comic.setName(comicFromDataBase.getName());					
+					
+					return comic;
+				}).collect(Collectors.toList());
+			
+			response.setComics(comics);
+			
+		} catch (Exception e) {
+			throw e;
+		}
+		return response;
 	}
 }

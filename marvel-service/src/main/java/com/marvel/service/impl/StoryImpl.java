@@ -2,6 +2,7 @@ package com.marvel.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,14 +104,30 @@ public class StoryImpl implements StoryService {
 		List<Long> storyCodes = null;
 		List<Story> storiesInDataBase = null;
 		List<Story> storyListFiltered = null;
+		List<Story> storyEntityListFiltered = null;
 		try {
 			storyListFiltered = new ArrayList<>();
+			storyEntityListFiltered = new ArrayList<>();
 			
 			// OBTENEMOS TODOS LOS CODIGOS DE LOS STORY
 			storyCodes = storyEntityList
 					.stream()
 					.map(it -> it.getStoryCode())
+					.distinct()
 					.collect(Collectors.toList());
+			
+			for(Long storyCode:storyCodes) {
+				Story storyAux = storyEntityList
+					.stream()
+					.filter(it -> it.getStoryCode() == storyCode)
+					.findFirst()
+					.orElse(null);
+				
+				if(!Objects.isNull(storyAux)) {
+					storyEntityListFiltered.add(storyAux);
+				}
+				
+			}
 			
 			// BUSCAMOS EN BASE DE DATOS
 			storiesInDataBase = storyRepository.findByStoryCodeIn(storyCodes);
@@ -122,7 +139,7 @@ public class StoryImpl implements StoryService {
 					.collect(Collectors.toList());
 			
 			// FILTRAMOS Y AGREGAMOS A UNA NUEVA LISTA LOS STORY QUE NO ESTAN EN BASE DE DATOS
-			for(Story itemSerie: storyEntityList) {
+			for(Story itemSerie: storyEntityListFiltered) {
 				if(!storyCodes.contains(itemSerie.getStoryCode())) {
 					storyListFiltered.add(itemSerie);
 				}

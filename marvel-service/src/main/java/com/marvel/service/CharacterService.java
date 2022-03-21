@@ -8,4 +8,5 @@ import com.marvel.entity.Character;
 public interface CharacterService {
 	public Void saveCharacters(List<Result> characters);
 	public Character findByCharacterCode(Long characterCode);
+	public com.marvel.dto.characters.getbycode.Character findByCode(Long characterCode) throws Exception;
 }

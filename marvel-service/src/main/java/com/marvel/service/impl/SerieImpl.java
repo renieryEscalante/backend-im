@@ -2,6 +2,7 @@ package com.marvel.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,14 +82,30 @@ public class SerieImpl implements SerieService {
 		List<Long> serieCodes = null;
 		List<Serie> seriesInDataBase = null;
 		List<Serie> serieListFiltered = null;
+		List<Serie> serieEntityListFiltered = null;
 		try {
 			serieListFiltered = new ArrayList<>();
+			serieEntityListFiltered = new ArrayList<>();
 			
 			// OBTENEMOS TODOS LOS CODIGOS DE LOS SERIES
 			serieCodes = serieEntityList
 					.stream()
 					.map(it -> it.getSerieCode())
+					.distinct()
 					.collect(Collectors.toList());
+			
+			// FILTRAMOS LOS DATOS REPETIDOS
+			for(Long serieCode: serieCodes) {
+				Serie serieAux = serieEntityList
+					.stream()
+					.filter( it -> it.getSerieCode() == serieCode)
+					.findFirst()
+					.orElse(null);
+				
+				if(!Objects.isNull(serieAux)) {
+					serieEntityListFiltered.add(serieAux);
+				}
+			}
 			
 			// BUSCAMOS EN BASE DE DATOS
 			seriesInDataBase = serieRepository.findBySerieCodeIn(serieCodes);
@@ -100,7 +117,7 @@ public class SerieImpl implements SerieService {
 					.collect(Collectors.toList());
 			
 			// FILTRAMOS Y AGREGAMOS A UNA NUEVA LISTA LAS SERIES QUE NO ESTAN EN BASE DE DATOS
-			for(Serie itemSerie: serieEntityList) {
+			for(Serie itemSerie: serieEntityListFiltered) {
 				if(!serieCodes.contains(itemSerie.getSerieCode())) {
 					serieListFiltered.add(itemSerie);
 				}

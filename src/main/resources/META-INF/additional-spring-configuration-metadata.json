@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "data-access.marvel-url",
+    "type": "java.lang.String",
+    "description": "A description for 'data-access.marvel-url'"
+  },
+  {
+    "name": "config.marvel-api.algorithm",
+    "type": "java.lang.String",
+    "description": "A description for 'config.marvel-api.algorithm'"
+  },
+  {
+    "name": "config.marvel-api.ts",
+    "type": "java.lang.String",
+    "description": "A description for 'config.marvel-api.ts'"
+  },
+  {
+    "name": "config.marvel-api.publickey",
+    "type": "java.lang.String",
+    "description": "A description for 'config.marvel-api.publickey'"
+  },
+  {
+    "name": "config.marvel-api.privatekey",
+    "type": "java.lang.String",
+    "description": "A description for 'config.marvel-api.privatekey'"
+  },
+  {
+    "name": "config.marvel-api.limit",
+    "type": "java.lang.String",
+    "description": "A description for 'config.marvel-api.limit'"
+  }
+]}

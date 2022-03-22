@@ -6,7 +6,8 @@ spring:
       enabled: false
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
+    show-sql: false
   datasource:
     url: jdbc:mysql://localhost/marvel_db
     username: root

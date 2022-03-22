@@ -6,8 +6,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.marvel.common.Constants;
+import com.marvel.common.CustomException;
 import com.marvel.dto.characters.response.Result;
 import com.marvel.entity.CharacterSerie;
 import com.marvel.repository.CharacterSerieRepository;
@@ -28,7 +31,7 @@ public class CharacterSerieImpl implements CharacterSerieService {
 	private static final String URI_SERIE = "http://gateway.marvel.com/v1/public/series/";
 	
 	@Override
-	public Void saveCharacterSeries(List<Result> characters) {
+	public Void saveCharacterSeries(List<Result> characters) throws CustomException {
 		List<CharacterSerie> detailEntityList = null;
 		try {
 			detailEntityList = builEntityList(characters);
@@ -36,12 +39,12 @@ public class CharacterSerieImpl implements CharacterSerieService {
 				characterSerieRepository.saveAll(detailEntityList);
 			}
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 		return null;
 	}
 	
-	private List<CharacterSerie> builEntityList(List<Result> characters){
+	private List<CharacterSerie> builEntityList(List<Result> characters) throws Exception{
 		List<CharacterSerie> detailEntityList = null;
 		try {
 			detailEntityList = new ArrayList<>();

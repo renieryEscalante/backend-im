@@ -24,7 +24,7 @@ public class ComicController {
 
 	@GetMapping
 	public ResponseEntity<Page<Comic>> findAll(@RequestParam(name = "offset", required = false) Optional<Integer> offset,
-			@RequestParam(name = "limit", required = false) Optional<Integer> limit){
+			@RequestParam(name = "limit", required = false) Optional<Integer> limit) throws Exception{
 		ResponseEntity<Page<Comic>> response = null;
 		Page<Comic> comicsResponse = null;
 		try {

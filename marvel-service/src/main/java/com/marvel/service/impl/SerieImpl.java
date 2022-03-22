@@ -6,9 +6,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.marvel.common.Constants;
+import com.marvel.common.CustomException;
 import com.marvel.dto.characters.response.Item;
 import com.marvel.dto.characters.response.Result;
 import com.marvel.entity.Serie;
@@ -25,7 +28,7 @@ public class SerieImpl implements SerieService {
 
 	@Override
 	@Transactional
-	public Void saveSeries(List<Result> characters) {
+	public Void saveSeries(List<Result> characters) throws CustomException {
 		List<Serie> serieEntityList = null;
 		try {
 			serieEntityList = builSerieEntityList(characters);
@@ -34,7 +37,7 @@ public class SerieImpl implements SerieService {
 				serieRepository.saveAll(serieEntityList);
 			}
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 		return null;
 	}
@@ -129,13 +132,12 @@ public class SerieImpl implements SerieService {
 		return serieListFiltered;
 	}
 
-	
 	@Override
-	public List<Serie> findBySerieCodes(List<Long> SerieCodes) {
+	public List<Serie> findBySerieCodes(List<Long> SerieCodes) throws CustomException {
 		try {
 			return serieRepository.findBySerieCodeIn(SerieCodes);
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 	}
 }

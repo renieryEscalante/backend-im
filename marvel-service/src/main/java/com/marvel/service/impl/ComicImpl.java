@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.marvel.common.Constants;
+import com.marvel.common.CustomException;
 import com.marvel.dto.characters.response.Item;
 import com.marvel.dto.characters.response.Result;
 import com.marvel.dto.comics.getall.Character;
@@ -29,7 +32,7 @@ public class ComicImpl implements ComicService {
 
 	@Override
 	@Transactional
-	public Void saveComics(List<Result> characters) {
+	public Void saveComics(List<Result> characters) throws CustomException {
 		List<Comic> comicEntityList = null;
 		try {
 			comicEntityList = builComicEntityList(characters);
@@ -39,7 +42,7 @@ public class ComicImpl implements ComicService {
 				comicRepository.saveAll(comicEntityList);
 			}
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 		return null;
 	}
@@ -134,17 +137,17 @@ public class ComicImpl implements ComicService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Comic> findByComicCodeIn(List<Long> comicCodes) {
+	public List<Comic> findByComicCodeIn(List<Long> comicCodes) throws CustomException {
 		try {
 			return comicRepository.findByComicCodeIn(comicCodes);
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<com.marvel.dto.comics.getall.Comic> findAll(Integer offset, Integer limit) {
+	public Page<com.marvel.dto.comics.getall.Comic> findAll(Integer offset, Integer limit) throws CustomException {
 		Page<Comic> comicsFromDataBase = null;
 		Page<com.marvel.dto.comics.getall.Comic> response = null;
 		Pageable pageable = null;
@@ -153,7 +156,7 @@ public class ComicImpl implements ComicService {
 			comicsFromDataBase = comicRepository.findAll(pageable);
 			response = buildResponseFromFindAll(comicsFromDataBase);
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 		return response;
 	}
@@ -191,15 +194,15 @@ public class ComicImpl implements ComicService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public com.marvel.dto.comics.getbycode.Comic findByCode(Long comicCode) throws Exception {
+	public com.marvel.dto.comics.getbycode.Comic findByCode(Long comicCode) throws CustomException {
 		Comic comicFromDataBase = null;
 		com.marvel.dto.comics.getbycode.Comic response = null;
 		try {
 			comicFromDataBase = comicRepository.findByComicCode(comicCode)
-				.orElseThrow(()-> new Exception());
+				.orElseThrow(()->  new CustomException(Constants.MSG_NOTFOUND, HttpStatus.NOT_FOUND));
 			response = buildResponseForFindByCode(comicFromDataBase);
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 		return response;
 	}

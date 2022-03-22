@@ -6,9 +6,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.marvel.common.Constants;
+import com.marvel.common.CustomException;
 import com.marvel.dto.characters.response.Item;
 import com.marvel.dto.characters.response.Result;
 import com.marvel.entity.StoryType;
@@ -23,7 +26,7 @@ public class StoryTypeImpl implements StoryTypeService {
 	
 	@Override
 	@Transactional
-	public Void saveStoryType(List<Result> characters) {
+	public Void saveStoryType(List<Result> characters) throws CustomException {
 		List<StoryType> storyEntityList = null;
 		try {
 			storyEntityList = builStoryTypeEntityList(characters);
@@ -32,7 +35,7 @@ public class StoryTypeImpl implements StoryTypeService {
 				storyTypeRepository.saveAll(storyEntityList);
 			}
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 		return null;
 	}
@@ -78,11 +81,11 @@ public class StoryTypeImpl implements StoryTypeService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<StoryType> getAll() {
+	public List<StoryType> getAll() throws CustomException {
 		try {
 			return storyTypeRepository.findAll();
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 	}
 

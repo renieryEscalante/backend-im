@@ -6,9 +6,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.marvel.common.Constants;
+import com.marvel.common.CustomException;
 import com.marvel.dto.characters.response.Item;
 import com.marvel.dto.characters.response.Result;
 import com.marvel.entity.Story;
@@ -30,7 +33,7 @@ public class StoryImpl implements StoryService {
 
 	@Override
 	@Transactional
-	public Void saveStory(List<Result> characters) {
+	public Void saveStory(List<Result> characters) throws CustomException {
 		List<Story> storyEntityList = null;
 		try {
 			storyEntityList = builStoryEntityList(characters);
@@ -39,12 +42,12 @@ public class StoryImpl implements StoryService {
 				storyRepository.saveAll(storyEntityList);
 			}
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 		return null;
 	}
 	
-	private List<Story> builStoryEntityList(List<Result> characters){
+	private List<Story> builStoryEntityList(List<Result> characters) throws Exception{
 		List<Story> storyEntityList = null;
 		List<com.marvel.dto.characters.response.Story> stories = null;
 		List<Item> itemStoryList = null;
@@ -153,11 +156,11 @@ public class StoryImpl implements StoryService {
 
 	
 	@Override
-	public List<Story> findByStoryCodes(List<Long> StoryCodes) {
+	public List<Story> findByStoryCodes(List<Long> StoryCodes) throws CustomException {
 		try {
 			return storyRepository.findByStoryCodeIn(StoryCodes);
 		} catch (Exception e) {
-			throw e;
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
 		}
 	}
 }

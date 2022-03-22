@@ -24,7 +24,7 @@ public class MarvelServiceApplication {
 
 	@PostConstruct
 	public void postConstruct(){
-//		initService.init();
+		initService.init();
 	}
 
 }

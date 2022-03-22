@@ -17,6 +17,7 @@ data-access:
   marvel-url: https://gateway.marvel.com:443/v1/public/
 config:
   marvel-api:
+    load-data: false
     ts: 1
     publickey: 0b9b6e3ac13acf77e0c80aa839c80409
     privatekey: 983303b5919e783c6cd2ab651b2a1e3e3a2a66e2

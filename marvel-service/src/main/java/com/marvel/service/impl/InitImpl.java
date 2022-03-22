@@ -49,6 +49,7 @@ public class InitImpl implements InitService {
 	@Autowired
 	private Environment env;
 	
+	private static final String LOADDATA = "config.marvel-api.load-data";
 	private static final String TS = "config.marvel-api.ts";
 	private static final String PRIVATEKEY = "config.marvel-api.privatekey";
 	private static final String PUBLICKEY = "config.marvel-api.publickey";
@@ -58,6 +59,14 @@ public class InitImpl implements InitService {
 	@Override
 	@Async
 	public Void init() {
+		Boolean loadData = Boolean.parseBoolean(env.getProperty(LOADDATA, "false"));
+		if(loadData) {
+			loadData();
+		}
+		return null;
+	}
+	
+	private Void loadData() {
 		List<Response> responseList;
 		String logMsg = "totalRecors: %s, count: %s, offset: %s";
 		String log;

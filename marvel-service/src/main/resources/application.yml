@@ -13,6 +13,18 @@ spring:
     username: root
     password: Mysql561887!
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 30000
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 10000 
+      max-lifetime: 30000
+      auto-commit: true
+      pool-name: marvel-pool
+server:
+  port: 9091
+  servlet:
+    context-path:  /api/v1
 data-access:
   marvel-url: https://gateway.marvel.com:443/v1/public/
 config:

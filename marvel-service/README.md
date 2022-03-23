@@ -1,14 +1,10 @@
 # marvel-service
 
--- -----------------------------------------------------
--- Schema marvel_db
--- -----------------------------------------------------
+
+
 CREATE SCHEMA IF NOT EXISTS `marvel_db` DEFAULT CHARACTER SET utf8 ;
 USE `marvel_db` ;
 
--- -----------------------------------------------------
--- Table `marvel_db`.`comics`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `marvel_db`.`comics` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `comic_code` BIGINT NULL DEFAULT NULL,
@@ -17,9 +13,6 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`comics` (
   UNIQUE INDEX `UK_gbt5294rldtgivxs8ge2ej5y6` (`comic_code` ASC) VISIBLE);
 
 
--- -----------------------------------------------------
--- Table `marvel_db`.`characters`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `marvel_db`.`characters` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `character_code` BIGINT NULL DEFAULT NULL,
@@ -30,9 +23,6 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`characters` (
   UNIQUE INDEX `UK_n8297dpwmna4yra350yeit8id` (`character_code` ASC) VISIBLE);
 
 
--- -----------------------------------------------------
--- Table `marvel_db`.`character_comics`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `marvel_db`.`character_comics` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `character_id` BIGINT NULL DEFAULT NULL,
@@ -48,9 +38,6 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`character_comics` (
     REFERENCES `marvel_db`.`characters` (`id`));
 
 
--- -----------------------------------------------------
--- Table `marvel_db`.`series`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `marvel_db`.`series` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL DEFAULT NULL,
@@ -59,9 +46,6 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`series` (
   UNIQUE INDEX `UK_4d53n0mkjw7fmyi6oh5coy07b` (`serie_code` ASC) VISIBLE);
 
 
--- -----------------------------------------------------
--- Table `marvel_db`.`character_series`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `marvel_db`.`character_series` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `character_id` BIGINT NULL DEFAULT NULL,
@@ -77,9 +61,6 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`character_series` (
     REFERENCES `marvel_db`.`series` (`id`));
 
 
--- -----------------------------------------------------
--- Table `marvel_db`.`story_types`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `marvel_db`.`story_types` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL DEFAULT NULL,
@@ -87,9 +68,6 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`story_types` (
   UNIQUE INDEX `UK_he7te93ys11eg2u5qckya4rxf` (`name` ASC) VISIBLE);
 
 
--- -----------------------------------------------------
--- Table `marvel_db`.`stories`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `marvel_db`.`stories` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL DEFAULT NULL,
@@ -103,9 +81,6 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`stories` (
     REFERENCES `marvel_db`.`story_types` (`id`));
 
 
--- -----------------------------------------------------
--- Table `marvel_db`.`character_stories`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `marvel_db`.`character_stories` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `character_id` BIGINT NULL DEFAULT NULL,
@@ -121,9 +96,6 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`character_stories` (
     REFERENCES `marvel_db`.`characters` (`id`));
 
 
--- -----------------------------------------------------
--- Table `marvel_db`.`creators`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `marvel_db`.`creators` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `creator_code` BIGINT NULL DEFAULT NULL,
@@ -133,9 +105,6 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`creators` (
   PRIMARY KEY (`id`));
 
 
--- -----------------------------------------------------
--- Table `marvel_db`.`creator_stories`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `marvel_db`.`creator_stories` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `creator_id` BIGINT NULL DEFAULT NULL,
@@ -149,4 +118,3 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`creator_stories` (
   CONSTRAINT `FKcn221slkydlg9h23sm9bfk0o6`
     FOREIGN KEY (`story_id`)
     REFERENCES `marvel_db`.`stories` (`id`));
-

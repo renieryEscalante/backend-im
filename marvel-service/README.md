@@ -118,3 +118,20 @@ CREATE TABLE IF NOT EXISTS `marvel_db`.`creator_stories` (
   CONSTRAINT `FKcn221slkydlg9h23sm9bfk0o6`
     FOREIGN KEY (`story_id`)
     REFERENCES `marvel_db`.`stories` (`id`));
+    
+INSERT INTO marvel_db.story_types (name) VALUES('ad');
+INSERT INTO marvel_db.story_types (name) VALUES('backcovers');
+INSERT INTO marvel_db.story_types (name) VALUES('cover');
+INSERT INTO marvel_db.story_types (name) VALUES('interiorStory');
+INSERT INTO marvel_db.story_types (name) VALUES('pinup');
+INSERT INTO marvel_db.story_types (name) VALUES('recap');
+INSERT INTO marvel_db.story_types (name) VALUES('text article');
+
+INSERT INTO marvel_db.`characters` (character_code, description, image, name) VALUES(1010801, '', 'http://i.annihil.us/u/prod/marvel/i/mg/e/20/52696868356a0.jpg', 'Ant-Man (Scott Lang)');
+INSERT INTO marvel_db.comics (comic_code, name) VALUES(16899, 'Amazing Spider-Man Annual (1964) #24');
+INSERT INTO marvel_db.series (name, serie_code) VALUES('Avengers (1998 - 2004)', 354);
+INSERT INTO marvel_db.stories (name, story_code, type_id) VALUES('Avengers (1998) #74', 2326, 1);
+
+INSERT INTO marvel_db.character_comics (character_id, comic_id) VALUES(1, 1);
+INSERT INTO marvel_db.character_series (character_id, serie_id) VALUES(1, 1);
+INSERT INTO marvel_db.character_stories (character_id, story_id) VALUES(1, 1);

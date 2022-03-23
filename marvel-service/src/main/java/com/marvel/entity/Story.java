@@ -34,9 +34,11 @@ public class Story implements Serializable {
     @Column(name = "story_code", unique = true)
 	private Long storyCode;
 	private String name;
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.LAZY)
 	private StoryType type;
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "story")
 	private List<CharacterStory> characterStories;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "story")
+	private List<CreatorStory> creatorStories;
 	private static final long serialVersionUID = 5153818293305246365L;
 }

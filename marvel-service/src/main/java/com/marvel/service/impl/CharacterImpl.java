@@ -238,4 +238,40 @@ public class CharacterImpl implements CharacterService {
 		}
 		return response;
 	}
+
+	
+	@Override
+	public com.marvel.dto.characters.getcharacterbycode.Character getCharacterByCode(Long characterCode)
+			throws CustomException {
+		Character characterFromDataBase = null;
+		com.marvel.dto.characters.getcharacterbycode.Character response = null;
+		try {
+			characterFromDataBase = repository.findByCharacterCode(characterCode)
+					.orElseThrow(() -> new CustomException(Constants.MSG_NOTFOUND, HttpStatus.NOT_FOUND));
+
+			response = buildResponseForGetCharacterByCode(characterFromDataBase);
+		} catch (CustomException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new CustomException(Constants.MSG_CONFLIC_ERROR, HttpStatus.CONFLICT);
+		}
+		return response;
+	}
+	
+	private com.marvel.dto.characters.getcharacterbycode.Character buildResponseForGetCharacterByCode(Character characterFromDataBase) {
+		com.marvel.dto.characters.getcharacterbycode.Character response = null;
+		try {
+			response = new com.marvel.dto.characters.getcharacterbycode.Character();
+			response.setCharacterCode(characterFromDataBase.getCharacterCode());
+			response.setName(characterFromDataBase.getName());
+			response.setDescription(characterFromDataBase.getDescription());
+			response.setImage(characterFromDataBase.getImage());
+
+		} catch (Exception e) {
+			throw e;
+		}
+		return response;
+	}
+	
+	
 }

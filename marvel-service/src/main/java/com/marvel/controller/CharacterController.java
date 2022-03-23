@@ -36,7 +36,7 @@ public class CharacterController {
 
 	@GetMapping
 	public ResponseEntity<List<com.marvel.dto.characters.getbynameandserieandstory.Character>> getByNameAndSerieAndStory(
-			@RequestParam(name = "character", required = false) String character, 
+			@RequestParam(name = "character", required = false) String character,
 			@RequestParam(name = "serie", required = false) String serie,
 			@RequestParam(name = "story", required = false) String story) throws Exception {
 		ResponseEntity<List<com.marvel.dto.characters.getbynameandserieandstory.Character>> response = null;
@@ -45,6 +45,21 @@ public class CharacterController {
 			characterResponse = characterService.getByNameAndSerieAndStory(character, serie, story);
 			response = new ResponseEntity<List<com.marvel.dto.characters.getbynameandserieandstory.Character>>(
 					characterResponse, HttpStatus.OK);
+		} catch (Exception e) {
+			throw e;
+		}
+		return response;
+	}
+
+	@GetMapping(path = "/{characterCode}")
+	public ResponseEntity<com.marvel.dto.characters.getcharacterbycode.Character> getCharacterByCode(
+			@PathVariable("characterCode") Long characterCode) throws Exception {
+		ResponseEntity<com.marvel.dto.characters.getcharacterbycode.Character> response = null;
+		com.marvel.dto.characters.getcharacterbycode.Character characterResponse = null;
+		try {
+			characterResponse = characterService.getCharacterByCode(characterCode);
+			response = new ResponseEntity<com.marvel.dto.characters.getcharacterbycode.Character>(characterResponse,
+					HttpStatus.OK);
 		} catch (Exception e) {
 			throw e;
 		}
